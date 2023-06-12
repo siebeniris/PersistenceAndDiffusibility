@@ -102,7 +102,7 @@ def build_colex_geo_graph(ds, wordlist):
             for k, v in geo_dict_edge.items():
                 g.edges[l1, l2][k] = v
 
-    outputfile = f"{stage2}/colex_geo/{ds}-{wordlist}.pickle"
+    outputfile = f"{stage2}/graphs/colex_geo/{ds}-{wordlist}.pickle"
     print(f"written to .. {outputfile}")
     with open(outputfile, "wb") as f:
         pickle.dump(g, f)
@@ -142,7 +142,7 @@ def build_phon_geo_graph():
             for k, v in geo_dict_edge.items():
                 g.edges[l1, l2][k] = v
 
-    outputfile = f"{stage2}/phon_geo_graph.pickle"
+    outputfile = f"{stage2}/graphs/phon_geo_graph.pickle"
     print(f"written to{outputfile}")
     with open(outputfile, "wb") as f:
         pickle.dump(g, f)
@@ -185,7 +185,7 @@ def build_phon_colex_geo_graph(ds, wordlist):
                 for k, v in geo_dict_edge.items():
                     g.edges[l1, l2][k] = v
 
-    outputfile = f"{stage2}/phon_colex_geo/colex_{ds}_{wordlist}_phon_geo_graph.pickle"
+    outputfile = f"{stage2}/graphs/phon_colex_geo/colex_{ds}_{wordlist}_phon_geo_graph.pickle"
     print(f"written to{outputfile}")
     with open(outputfile, "wb") as f:
         pickle.dump(g, f)
