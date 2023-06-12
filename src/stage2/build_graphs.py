@@ -1,21 +1,10 @@
 import pandas as pd
-import numpy as np
-from itertools import product
 from tqdm import tqdm
 import networkx as nx
 import pickle
 
 stage1 = "data/stage1"
 stage2 = "data/stage2"
-
-
-def langauge_info():
-    """
-    Load language information
-    :return: a dictionary of language information with glottocode as key.
-    """
-    langdict = pd.read_csv("data/languages/languages_all.csv", index_col=0).to_dict(orient="index")
-    return langdict
 
 
 def load_geo_graph():
@@ -169,11 +158,45 @@ def build_phon_colex_geo_graph(ds, wordlist):
 
     print(f"working on {len(inter_langs)} languages")
 
+    g = nx.Graph()
+    g.graph["dataset"] = f"{ds}_{wordlist}_colex_phon_geo"
+    g.graph["langs"] = len(inter_langs)
+    # add nodes from geo graph. all the geo information
+    # name, family, parent, branch, iso3, area, timespan, coords,
 
+    for lang in tqdm(inter_langs):
+
+        geo_dict_node = geo_graph.nodes[lang]
+        # add colex number for the language.
+        g.add_node(lang, colex_nr=colex_nr_dict[lang])
+        # add geo information for the node.
+        for k, v in geo_dict_node.items():
+            g.nodes[lang][k] = v
+
+    for langp, phon_pmi in phon_dict.items():
+        l1, l2 = langp
+        if l1 in inter_langs and l2 in inter_langs:
+            if (l1,l2) in colex_dict:
+                weight, pmi = colex_dict[(l1, l2)]  # already sorted.
+                # if l1 in inter_langs and l2 in inter_langs:
+                g.add_edge(l1, l2, phon_pmi=phon_pmi, colex_pmi=pmi, weight=weight)
+
+                geo_dict_edge = geo_graph.edges[l1, l2]
+                for k, v in geo_dict_edge.items():
+                    g.edges[l1, l2][k] = v
+
+    outputfile = f"{stage2}/phon_colex_geo/colex_{ds}_{wordlist}_phon_geo_graph.pickle"
+    print(f"written to{outputfile}")
+    with open(outputfile, "wb") as f:
+        pickle.dump(g, f)
 
 
 if __name__ == '__main__':
     # if build phon geo graph
     build_phon_geo_graph()
-    ## if build colex geo graph
-    build_colex_geo_graph("colexnet", "nuclear")
+
+    # if build colex geo graph
+    for ds in ["clics3", "wn", "colexnet", "colex_all_dedup"]:
+        for wordlist in ["nuclear", "peripheral", "emotion_semantics"]:
+            build_colex_geo_graph(ds, wordlist)
+            build_phon_colex_geo_graph(ds, wordlist)
