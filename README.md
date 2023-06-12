@@ -1,6 +1,12 @@
-# PersistenceAndDiffusibility
+# Patterns of Persistence and Diffusibility for 1561 Languages: In the case of crosslingual colexifications
 
-Patterns Persistence and Diffusibility across Languages: In the case of crosslingual colexifications
+
+- control group: random lexica
+- consulting highly familiar lexicon?
+  - familiarity and colexifications.
+    - only found english ones....
+    
+
 
 # colexifications
 
@@ -31,7 +37,9 @@ Patterns Persistence and Diffusibility across Languages: In the case of crosslin
 
 `python src/stage1/core_vocab_colex.py nuclear data/stage1/colex_wn_emotion.csv`
 
+
 `Glottocode`
+
 ####  nuclear
 
 - wn, len 1980472, len 17386, len 9313 langs 108
@@ -55,35 +63,60 @@ Patterns Persistence and Diffusibility across Languages: In the case of crosslin
 - all, len 14217010, len 347199, len 141072, langs 1451
 
 
-## 2. phonological pmi (Jaeger 2018)
+## 2. Phonological pmi (Jäger 2018)
 
 `notebooks/stage1_jaeger2022`
 
-we used the latest compiled data (2022) from [Jaeger2018].
+we used the latest compiled data (2022) from [Jäger2018].
 
 
-## 3. get geo information
+## 3. Geo information
 
 `notebooks/language_contact.ipynb`
 
 - using `Glottocode`
-- `data/stage1/pmiLanguageDistane.csv` -> `languages_coords.csv` get the languages where there are geo coordinates.
-  #LANGUAGES **1561**
+- `data/stage1/pmiLanguageDistane.csv` union `data/colexifications/colex_all_dedup.csv` -> `languages_coords.csv` get the languages where there are geo coordinates.
+  #LANGUAGES `2554`
+  - phon: 1563
+  - colex: 2933
+  - union: 2933
+  - intersected with geo info: 2554
 
-1. get the existant languages `lang2lang_coords.csv`
+
+1. get the existant languages `lang2lang_coords.csv` #LANG_PAIRS: `6522896`
 2. calculate geodesic distance of the coordinates `lang2lang_geodesic.csv`
 3. create a graph from the geo information `language_geo_graph.pickle`
-    - nodes: 1561, nodes: 1217580
-    - node example: `"pawa1225" -> {'coord': (-6.88021, 145.081)} `
-    - edge example: `('pawa1255','guin1254') -> {'contact': 1242, 'geodist': 17172.307067554568}`
-        - contact: how many languages in between
-        - geodist: geodesic distance in KM.
+    - nodes: 2554, nodes: 3260181
+    - node example: 
+      - `stand1295: {'name': 'German',
+         'family': 'Indo-European',
+         'parent': 'Global German',
+         'branch': 'Global German',
+         'iso3': 'deu',
+         'area': 'Eurasia',
+         'timespan': (),
+         'coord': (48.649, 12.4676)} `
+    - edge example: 
+      - `("stan1295", "dutc1256") ->
+      {'contact': 13,
+         'geodist': 648.8953043040958,
+         'neighbour': 1,
+         'branch': 0,
+         'area': 1,
+         'family': 1}`
+      - contact: how many languages in between
+      - geodist: geodesic distance in KM.
+      - neighbour(binary): `1 (contact<=15) or 0` 
+      - branch: `1 (if two languages belong to the same language branch) , 0 (no), -1 (unknown)`
+      - area: `1 (if two languages belong to the same language macroarea) , 0 (no), -1 (unknown)`
+      - family: `1 (if two languages belong to the same language family) , 0 (no), -1 (unknown)`
+     
 
 
 __Model geo (dis)-similarity__:
 - in-between contact languages
 - geodesic distance in KM.
-- neighbour or not (binary) <- based on contact languages.
+- neighbour or not (binary) `<-` based on contact languages.
 
 
 ## 4. get lang2lang pmi from colexification patterns
@@ -93,5 +126,25 @@ __Model geo (dis)-similarity__:
    - `python src/stage1/colex_lang_pmi.py data/stage1/edgelists data/stage1/colex_pmi`
 
 
+## 5. Language Branch calculation
+Adjusted codes from [Gast, V. & Koptjevskaja-Tamm, M. (2022).].
+
+`notebooks/stage1_get_language_branches.ipynb`
+
+
+
+# Stage 2 Analysis
+## 1. generate graphs:
+
+`python src/stage2/build_graphs.py`
+### Graphs Data
+- `colex_geo`
+- `phon_colex_geo`
+- `phon_geo` 
+
+
+
+
+# Stage 3 Plots.
 
 
