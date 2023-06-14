@@ -30,6 +30,11 @@ def preprocessing_dataset(wordlist, outputfolder="data/stage1", inputfile="data/
 
     df = pd.read_csv(inputfile)
 
+    synsets2filter = ["'s", "--"]
+    df = df[~df[f"{concept_field}1"].isin(synsets2filter)]
+    df = df[~df[f"{concept_field}2"].isin(synsets2filter)]
+
+
     for ds in ["wn", "clics3", "colexnet"]:
         df_ds = df[df["ds"] == ds]
 
@@ -71,6 +76,11 @@ def preprocessing_all(wordlist, outputfolder="data/stage1", inputfile="data/cole
 
     df = pd.read_csv(inputfile)
 
+    # filter out the synsets
+    synsets2filter = ["'s", "--"]
+    df = df[~df[f"{concept_field}1"].isin(synsets2filter)]
+    df = df[~df[f"{concept_field}2"].isin(synsets2filter)]
+
     print(f" len {len(df)}")
 
     df_ds = df[df[f"{concept_field}1"].isin(vocab) | df[f"{concept_field}2"].isin(vocab)]
@@ -81,7 +91,7 @@ def preprocessing_all(wordlist, outputfolder="data/stage1", inputfile="data/cole
         langs = []
         for lang, group in df_ds.groupby(lang_field):
             syns = set(group[f"{concept_field}1"].tolist() + group[f"{concept_field}2"].tolist())
-            if len(syns) > threshold:
+            if len(syns) > threshold:  # filter out synsets appear in less than 3 languages.
                 langs.append(lang)
 
         df_ds = df_ds[df_ds[lang_field].isin(langs)]
@@ -94,5 +104,5 @@ def preprocessing_all(wordlist, outputfolder="data/stage1", inputfile="data/cole
 if __name__ == '__main__':
     import plac
 
-    # plac.call(preprocessing_dataset)
-    plac.call(preprocessing_all)
+    plac.call(preprocessing_dataset)
+    # plac.call(preprocessing_all)
