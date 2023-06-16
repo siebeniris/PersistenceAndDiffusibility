@@ -1,11 +1,19 @@
-# Patterns of Persistence and Diffusibility for 1561 Languages: In the case of crosslingual colexifications
+# Patterns of Persistence and Diffusibility across 1568 Languages: A Case of Colexifications and Phonology
 
 - control group: random lexica
 - consulting highly familiar lexicon?
     - familiarity and colexifications.
         - only found english ones....
 
-# colexifications
+# Colexifications
+
+- frequency of the colexifications in COLEXNET+
+  - input:
+    - `colexifications/colexnet+.csv`
+    - `ColexificationNet/output/ngrams/updated`
+  - output: `freq_graph.pickle`
+  - script `CrossCoLEX/src/preprocessing/data/get_colex_freq.py`
+
 
 - wn 0.1
 - colexnet+
@@ -15,7 +23,7 @@
     - colex_wn_phon.csv
     - colexnet.csv
 
-# persistence
+# Persistence
 
 - stability?
     - schutze's definition using concreteness.
@@ -25,7 +33,23 @@
     - wikipron
         - see the intersection of wikipron with both colexification networks.
 
+
+# Wordlist
+
+- concreteness 
+- affectiveness
+- nuclear
+- peripheral
+- emotion semantics
+
+
+
+
+
 # Stage 1
+
+
+
 
 ## 1. Generate colexification dataset per wordlist
 
@@ -169,11 +193,11 @@ Adjusted codes from [Gast, V. & Koptjevskaja-Tamm, M. (2022).].
 ## 1. generate graphs:
 
 - COLEXNET:
-` python src/stage2/language_contacts_graphs.py colexnet data/stage1/language_contact_colexnet data/languages/languages_colexnet.csv data/stage2/graphs/colex_geo`
+` python src/stage2/language_contacts_graphs.py colexnet data/stage1/language_contact_colexnet data/languages/languages_colexnet.csv data/stage2/graphs`
     - `stage2/graphs/colexnet_geo_graph.pickle`   langs 1320 - lang pairs 870540
 
 - PHON:
-`python src/stage2/language_contacts_graphs.py phon data/stage1/language_contact_jaeger data/languages/languages_jaeger.csv data/stage2/graphs/phon_geo `
+`python src/stage2/language_contacts_graphs.py phon data/stage1/language_contact_jaeger data/languages/languages_jaeger.csv data/stage2/graphs `
   - `stage2/graphs/phon_geo_graph.pickle`, langs 1558 - lang pairs 1212903
 - COLEXNET_PHON: 
 `python src/stage2/language_contacts_graphs.py colexnet_phon data/stage1/language_contact_colexnet_jaeger data/languages/languages_colexnet_jaeger.csv data/stage2/graphs`
