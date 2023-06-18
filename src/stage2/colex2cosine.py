@@ -55,7 +55,7 @@ def convert_colex2cosine(inputfile=f"{stage1}/glottocodes/colexnet_nuclear.csv",
         if (t1, t2) in freq_graph.edges:
             freq = freq_graph.edges[t1, t2]["frequency"]
             if iso3 in freq:
-                print(iso3, colex, freq[iso3])
+                # print(iso3, colex, freq[iso3])
                 lang2colex.at[iso3, colex] = freq[iso3]
                 counter += 1
     print(f"non-na values: ", counter)

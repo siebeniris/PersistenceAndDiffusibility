@@ -78,11 +78,20 @@ def get_uriel_feature(feature, df):
 
 
 def load_word_dict(wordlist):
+    """
+    Load language similarity calculated with wordlists.
+    colex2cosine/edgelists/...
+    """
     df_word = pd.read_csv(f"data/stage2/colex2cosine/edgelists/colexnet_{wordlist}.csv")
     d = dict()
-    for src, tgt, cos in zip(df_word["source_iso"], df_word["target_iso"], df_word["cosine"]):
-        s, t = sorted((src, tgt))
-        d[(s, t)] = cos
+    if "Cosine" in df_word.columns:
+        for src, tgt, cos in zip(df_word["source"], df_word["target"], df_word["Cosine"]):
+            s, t = sorted((src, tgt))
+            d[(s, t)] = cos
+    else:
+        for src, tgt, cos in zip(df_word["source_iso"], df_word["target_iso"], df_word["cosine"]):
+            s, t = sorted((src, tgt))
+            d[(s, t)] = cos
     return d
 
 
@@ -99,12 +108,14 @@ def load_phon_dist():
 def build_lang2geo_graph(ds="colexnet",
                          inputfolder="data/stage1/language_contact_colexnet",
                          language_file="data/languages/languages_colexnet.csv",
-                         outputfolder="data/stage2/graphs/colex_geo"):
+                         outputfolder="data/stage2/graphs"):
     print("Loading data....")
+    # language contact languages.
     langs = [x.replace(".json", "") for x in os.listdir(inputfolder) if x.endswith(".json")]
     outputfile = os.path.join(outputfolder, f"{ds}_geo_graph.pickle")
     langdict = langauge_info(language_file)
 
+    # lang2lang geodist
     lang2lang_dict_sorted = load_geodesic_dict()
 
     print("Building graphs...")
@@ -145,7 +156,7 @@ def build_lang2geo_graph(ds="colexnet",
                    timespan=tuple(times),
                    coord=(lat, long))
 
-    print("Building languages dataframe ...")
+    print("Building languages contact dataframe ...")
     lang1s = []
     lang2s = []
     cons = []
@@ -166,14 +177,20 @@ def build_lang2geo_graph(ds="colexnet",
         d_nuclear = load_word_dict("nuclear")
         d_peripheral = load_word_dict("peripheral")
         d_random = load_word_dict("random")
+
+        d_concrete = load_word_dict("concrete_words")
+        d_abstract = load_word_dict("abstract_words")
+        d_affective = load_word_dict("affective_extreme")
     elif ds == "phon":
+        print("loading phon")
         d_phon = load_phon_dist()
     else:
         # mix.
-        d_emotion = load_word_dict("emotion_semantics")
+        print("colexnet and phon")
         d_nuclear = load_word_dict("nuclear")
-        d_peripheral = load_word_dict("peripheral")
-        d_random = load_word_dict("random")
+        # d_peripheral = load_word_dict("peripheral")
+        # d_random = load_word_dict("random")
+        # d_emotion = load_word_dict("emotion_semantics")
         d_phon = load_phon_dist()
 
     print("Write genetic feature...")
@@ -200,7 +217,7 @@ def build_lang2geo_graph(ds="colexnet",
             g.add_edge(lang, lang2, contact=con, geodist=distkm, neighbour=0, branch=branch, area=area,
                        family=family, genus=genus, macroarea=macroarea, syntactic=syntactic, genetic=genetic)
 
-        if ds != "phon":
+        if ds == "colexnet":
             if (l1, l2) in d_emotion:
                 g.edges[l1, l2]["emotion"] = d_emotion[(l1, l2)]
             if (l1, l2) in d_nuclear:
@@ -210,7 +227,20 @@ def build_lang2geo_graph(ds="colexnet",
             if (l1, l2) in d_random:
                 g.edges[l1, l2]["random"] = d_random[(l1, l2)]
 
-        elif ds != "colexnet":
+            if (l1, l2) in d_concrete:
+                g.edges[l1, l2]["concrete"] = d_concrete[(l1, l2)]
+            if (l1, l2) in d_abstract:
+                g.edges[l1, l2]["abstract"] = d_abstract[(l1, l2)]
+            if (l1, l2) in d_affective:
+                g.edges[l1, l2]["affective"] = d_affective[(l1, l2)]
+
+
+        elif ds == "phon":
+            if (l1, l2) in d_phon:
+                g.edges[l1, l2]["phon"] = d_phon[(l1, l2)]
+        else:
+            if (l1, l2) in d_nuclear:
+                g.edges[l1, l2]["nuclear"] = d_nuclear[(l1, l2)]
             if (l1, l2) in d_phon:
                 g.edges[l1, l2]["phon"] = d_phon[(l1, l2)]
 

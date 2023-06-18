@@ -12,9 +12,10 @@ def load_wordlist(name):
     return wordlist
 
 
-def preprocessing_dataset(wordlist, outputfolder="data/stage1", inputfile="data/colexifications/colex_all.csv",
+def preprocessing_dataset(wordlist, ratings=True, outputfolder="data/stage1/glottocodes",
+                          inputfile="data/colexifications/colexnet.csv",
                           threshold=3,
-                          lang_field="Glottocode", concept_field="SYN"):
+                          lang_field="iso3", concept_field="SYNSET"):
     """
     Get colexification graphs for each dataset including the re. wordlist.
     :param wordlist: the chosen wordlist
@@ -35,27 +36,34 @@ def preprocessing_dataset(wordlist, outputfolder="data/stage1", inputfile="data/
     df = df[~df[f"{concept_field}2"].isin(synsets2filter)]
 
 
-    for ds in ["wn", "clics3", "colexnet"]:
-        df_ds = df[df["ds"] == ds]
+    # for ds in ["colexnet"]:
+    #     df_ds = df[df["ds"] == ds]
 
-        print(f"{ds}, len {len(df_ds)}")
+    print(f"len {len(df)}")
 
-        df_ds = df_ds[df_ds[f"{concept_field}1"].isin(vocab) | df_ds[f"{concept_field}2"].isin(vocab)]
-        if len(df_ds) > 0:
-            print(f"len {len(df_ds)}")
-            df_ds = df_ds.drop_duplicates(subset=[lang_field, "COLEX"])
+    if ratings:
+        df_ds = df[df[f"{concept_field}1"].isin(vocab) & df[f"{concept_field}2"].isin(vocab)]
+    else:
+        df_ds = df[df[f"{concept_field}1"].isin(vocab) | df[f"{concept_field}2"].isin(vocab)]
+    if len(df_ds) > 0:
+        print(f"len {len(df_ds)}")
+        df_ds = df_ds.drop_duplicates(subset=[lang_field, "COLEX"])
 
-            langs = []
-            for lang, group in df_ds.groupby(lang_field):
-                syns = set(group[f"{concept_field}1"].tolist() + group[f"{concept_field}2"].tolist())
-                if len(syns) > threshold:
-                    langs.append(lang)
+        langs = []
+        for lang, group in df_ds.groupby(lang_field):
+            syns = set(group[f"{concept_field}1"].tolist() + group[f"{concept_field}2"].tolist())
+            if len(syns) > threshold:
+                langs.append(lang)
 
-            df_ds = df_ds[df_ds[lang_field].isin(langs)]
-            print(f"len {len(df_ds)} langs {len(langs)}")
-            df_ds.to_csv(f"{outputfolder}/{ds}_{wordlist}.csv", index=False)
-        else:
-            print(f"no concept in the data available")
+        df_ds = df_ds[df_ds[lang_field].isin(langs)]
+        df_ds.rename(columns={f"{concept_field}1": "SYN1", f"{concept_field}2": "SYN2"}, inplace=True)
+        print(f"len {len(df_ds)} langs {len(langs)}")
+        synsets = set(df_ds["SYN1"].tolist()+df_ds["SYN2"].tolist())
+        print(f"len synsets {len(synsets)}")
+
+        df_ds.to_csv(f"{outputfolder}/colexnet_{wordlist}.csv", index=False)
+    else:
+        print(f"no concept in the data available")
 
 
 def preprocessing_all(wordlist, outputfolder="data/stage1", inputfile="data/colexifications/colex_all_dedup.csv",
