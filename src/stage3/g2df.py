@@ -71,7 +71,14 @@ def g2df(g):
     df["abstract"] = 1 - df["abstract"]
     df["concrete"] = 1 - df["concrete"]
     # affectivess
-    df["affective"] = 1 - df["affective"]
+    # df["affective"] = 1 - df["affective"]
+
+    # controlled.
+    df["aff_conc"] = 1 - df["aff_conc"]
+    df["aff_abs"] = 1 - df["aff_abs"]
+    # affectivess
+    # df["affective"] = 1 - df["affective"]
+
 
     contact = df["contact"].to_numpy().reshape(-1, 1)
     contact = normalizer(contact)

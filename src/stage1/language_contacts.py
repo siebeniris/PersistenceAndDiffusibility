@@ -6,12 +6,13 @@ import pandas as pd
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
+### Thanks Esther Ploeger
 
 def get_language_distance(inputfile="data/languages/languages_colexnet.csv",
                           outputfolder="data/stage1/language_contact_colexnet"):
     df_geodesic = pd.read_csv("data/stage1/lang2lang_geodesic.csv")
     print(len(df_geodesic))
-    df_geodesic.dropna(subset=["ISO1","ISO2"],inplace=True)
+    df_geodesic.dropna(subset=["ISO1", "ISO2"], inplace=True)
     print(len(df_geodesic))
     lang2lang_dict_ = dict(zip(zip(df_geodesic["ISO1"], df_geodesic["ISO2"]), df_geodesic["GeodesicDist"]))
     lang2lang_dict_sorted = {tuple(sorted(x)): y for x, y in lang2lang_dict_.items()}
