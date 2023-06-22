@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 sns.set_style("darkgrid")
-palettes = ["black", "#194569", "#5F84A2", "#91AEC4", "#008ECC", "#B7D0E1", "cadetblue"]
+palettes = ["seagreen", "cornflowerblue"]
 stage3 = "data/stage3/plots"
 
 

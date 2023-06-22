@@ -9,12 +9,12 @@ stage3 = "data/stage3/plots"
 
 # color palettes: https://matplotlib.org/stable/gallery/color/named_colors.html
 
-def plot_control_phylo(group, df, ylim=(-0.1, 0.3), figsize=(5, 6)):
+def plot_control_phylo(group, df, ylim=(-0.1, 0.35), figsize=(5, 6)):
     df = df[df["group"] == group]
     df = df[df["control"] == "genetic"]
 
     plt.figure(figsize=figsize)
-    palettes = ["black", "dimgrey", "silver"]
+    palettes = ["royalblue", "goldenrod", "tomato"]
     ax = sns.pointplot(x='predictor', y='Beta', hue='Response', palette=palettes,
                        linestyles='', dodge=.3, data=df)
     for (x0, y0), (x1, y1), (x2, y2) in zip(ax.collections[0].get_offsets(), ax.collections[1].get_offsets(),
@@ -36,14 +36,14 @@ def plot_control_phylo(group, df, ylim=(-0.1, 0.3), figsize=(5, 6)):
     plt.clf()
 
 
-def plot_control_geo(group, df, ylim=(-0.1, 0.3), figsize=(5, 6)):
+def plot_control_geo(group, df, ylim=(-0.1, 0.35), figsize=(5, 6)):
     df = df[df["group"] == group]
     df = df[df["predictor"] == "genetic"]
     print(df.head())
 
     plt.figure(figsize=figsize)
 
-    palettes = ["black", "dimgrey", "silver"]
+    palettes = ["royalblue", "goldenrod", "tomato"]
     ax = sns.pointplot(x='control', y='Beta', hue='Response', palette=palettes,
                        linestyles='', dodge=.3, data=df)
     for (x0, y0), (x1, y1), (x2, y2) in zip(ax.collections[0].get_offsets(), ax.collections[1].get_offsets(),
@@ -69,7 +69,8 @@ def plot_control_geo(group, df, ylim=(-0.1, 0.3), figsize=(5, 6)):
 def main():
     # inputfile = "data/stage3/results/phon_colex_mixed_effects_results.csv"
     # inputfile = "data/stage3/results/non_neighbours/phon_reports_mixed_effects_interval.csv"
-    inputfile="data/stage3/results/all/phon_reports_mixed_effects2.csv"
+    inputfile="data/stage3/results/all/control_phon_reports_mixed_effects2.csv"
+    # inputfile = "data/stage3/results/new/phon_reports_mixed_effects_geo_relate2.csv"
     df = pd.read_csv(inputfile)
     values = {"geodist_norm": "GEO.Dist", "contact_norm": "Contact.Dist", "neighbour": "Neighbour"}
     # values = {"geodist_norm": "GEO.Dist", "contact_norm": "Contact.Dist"}
@@ -80,6 +81,7 @@ def main():
     df["predictor"].replace(values, inplace=True)
     df["control"].replace(values, inplace=True)
     df["Response"].replace(responses, inplace=True)
+
     groups = list(set(df["group"].tolist()))
     for group in groups:
         print(f"{group} plots....")
