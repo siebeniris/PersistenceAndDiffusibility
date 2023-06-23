@@ -6,7 +6,6 @@ import pandas as pd
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
-### Thanks Esther Ploeger
 
 def get_language_distance(inputfile="data/languages/languages_colexnet.csv",
                           outputfolder="data/stage1/language_contact_colexnet"):

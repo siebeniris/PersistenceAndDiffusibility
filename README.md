@@ -1,56 +1,35 @@
-# Patterns of Persistence and Diffusibility across 1568 Languages: A Case of Colexifications and Phonology
+# Patterns of Persistence and Diffusibility across World's Languages 
 
-- control group: random lexica
-- consulting highly familiar lexicon?
-    - familiarity and colexifications.
-        - only found english ones....
+# Graphs
+- Zenodo: [https://zenodo.org/record/8074593](https://zenodo.org/record/8074593)
+- According to  different set of languages in each graph, language contact params. are calculated anew each time.
 
-# Colexifications
-
-- frequency of the colexifications in COLEXNET+
-  - input:
-    - `colexifications/colexnet+.csv`
-    - `ColexificationNet/output/ngrams/updated`
-  - output: `freq_graph.pickle`
-  - script `CrossCoLEX/src/preprocessing/data/get_colex_freq.py`
-
-
-- wn 0.1
-- colexnet+
-
-- `data/colexifications`
-    - clics3.csv
-    - colex_wn_phon.csv
-    - colexnet.csv
-
-# Persistence
-
-- stability?
-    - schutze's definition using concreteness.
-
-- diffusibility
-    - language contact.
-    - wikipron
-        - see the intersection of wikipron with both colexification networks.
-
-
-# Wordlist
+# Lexicons
 
 - concreteness 
   - abstract words
-    - colexifications: 1243481, langs: 1334, synsets: 1781
   - concrete words
-    - colexificaitons: 353755, langs: 1334, synsets: 1024
 - affectiveness
   - extreme
-    - colexifications: 43564, langs: 1334, synsets: 263
-  - neutral 
-    - colexifications: 16, langs: 8, synsets: 15
 - nuclear
 - peripheral
 - emotion semantics
 
 
+
+[//]: # (# Colexifications)
+
+[//]: # (- frequency of the colexifications in COLEXNET+)
+
+[//]: # (  - input:)
+
+[//]: # (    - `colexifications/colexnet+.csv`)
+
+[//]: # (    - `ColexificationNet/output/ngrams/updated`)
+
+[//]: # (  - output: `freq_graph.pickle`)
+
+[//]: # (  - script `CrossCoLEX/src/preprocessing/data/get_colex_freq.py`)
 
 
 
@@ -278,6 +257,7 @@ Adjusted codes from [Gast, V. & Koptjevskaja-Tamm, M. (2022).].
 ## 4. Plot
 - phon
   - `python src/stage3/plot_phon_colex.py data/stage3/results/all/phon_reports_mixed_effects2.csv `
-- 
 
+- colex
+  - three levels of colex. plots
 

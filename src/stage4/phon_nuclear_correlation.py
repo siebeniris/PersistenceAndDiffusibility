@@ -78,6 +78,8 @@ def plot_pearsonr(df, field, figsize, width=0.5):
     samples = df_pearsonr["sample"].tolist()
     plt.ylabel(f"{field.capitalize()}", fontsize=16)
     plt.xlabel("Pearson correlation with 95% CI", fontsize=16)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.xlim(0, 0.225)
     # For each bar: Place a label
     for idx, rect in enumerate(rects):
@@ -115,7 +117,7 @@ def plot_pearsonr(df, field, figsize, width=0.5):
     plt.clf()
 
 
-def main(field, w=20, h=20, width=0.5):
+def main(field, w=14, h=5, width=0.5):
     df = pd.read_csv("data/stage3/colexnet_phon_geo_graph_edges.csv")
     df = df.dropna(subset=["phon", "nuclear"])
     plot_pearsonr(df, field, figsize=(w, h), width=width)
