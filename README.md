@@ -6,6 +6,8 @@
 
 # Lexicons
 
+`data/wordlists/`
+
 - concreteness 
   - abstract words
   - concrete words
