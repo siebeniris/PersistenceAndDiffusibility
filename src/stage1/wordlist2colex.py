@@ -1,4 +1,6 @@
+import os
 import pandas as pd
+from tqdm import tqdm
 
 
 def load_wordlist(name):
@@ -11,102 +13,53 @@ def load_wordlist(name):
         wordlist = [x.split()[0].lower() for x in f.readlines()]
     return wordlist
 
+# iterate through all the files
+def load_lang_colex(inputfolder, lang):
+    df = pd.read_csv(os.path.join(inputfolder, f"{lang}.csv"))
+    df[["syn1", "syn2"]] = df.colex.str.split("~", expand=True)
+    return df
 
-def preprocessing_dataset(wordlist, ratings=True, outputfolder="data/stage1/glottocodes",
-                          inputfile="data/colexifications/colexnet.csv",
-                          threshold=3,
-                          lang_field="iso3", concept_field="SYNSET"):
+
+
+def preprocessing_dataset(wordlist, ratings=False, outputfolder="data/stage1/word2colex",
+                          inputfolder="/Users/yiyichen/Documents/experiments/CrossCoLEX/data/colex_freq_processed",
+                          threshold=3):
     """
     Get colexification graphs for each dataset including the re. wordlist.
     :param wordlist: the chosen wordlist
     :param outputfolder: folder for output
-    :param inputfile:  file for input
-    :param threshold: threshold of the language occurrences for the regarding colexifcations.
-    :param lang_field: Glottocode, iso3.
-    :param concept_field: SYN, SYNSET
+    :param inputfolder:  folder for input
+    :param threshold: threshold of the language occurrences for the regarding colexifcations
     :return: None
     """
     print(outputfolder, wordlist)
     vocab = load_wordlist(wordlist)
+    # output to each sub-directory
+    outputdir = os.path.join(outputfolder, wordlist)
+    if not os.path.exists(outputdir):
+        os.makedirs(outputdir)
 
-    df = pd.read_csv(inputfile)
+    for language_file in tqdm(os.listdir(inputfolder)):
+        if language_file.endswith(".csv"):
+            try:
+                language = language_file.replace(".csv", "")
+                df_lang = load_lang_colex(inputfolder, language)
 
-    synsets2filter = ["'s", "--"]
-    df = df[~df[f"{concept_field}1"].isin(synsets2filter)]
-    df = df[~df[f"{concept_field}2"].isin(synsets2filter)]
-
-
-    # for ds in ["colexnet"]:
-    #     df_ds = df[df["ds"] == ds]
-
-    print(f"len {len(df)}")
-
-    if ratings:
-        df_ds = df[df[f"{concept_field}1"].isin(vocab) & df[f"{concept_field}2"].isin(vocab)]
-    else:
-        df_ds = df[df[f"{concept_field}1"].isin(vocab) | df[f"{concept_field}2"].isin(vocab)]
-    if len(df_ds) > 0:
-        print(f"len {len(df_ds)}")
-        df_ds = df_ds.drop_duplicates(subset=[lang_field, "COLEX"])
-
-        langs = []
-        for lang, group in df_ds.groupby(lang_field):
-            syns = set(group[f"{concept_field}1"].tolist() + group[f"{concept_field}2"].tolist())
-            if len(syns) > threshold:
-                langs.append(lang)
-
-        df_ds = df_ds[df_ds[lang_field].isin(langs)]
-        df_ds.rename(columns={f"{concept_field}1": "SYN1", f"{concept_field}2": "SYN2"}, inplace=True)
-        print(f"len {len(df_ds)} langs {len(langs)}")
-        synsets = set(df_ds["SYN1"].tolist()+df_ds["SYN2"].tolist())
-        print(f"len synsets {len(synsets)}")
-
-        df_ds.to_csv(f"{outputfolder}/colexnet_{wordlist}.csv", index=False)
-    else:
-        print(f"no concept in the data available")
+                # filter out the symbols as synset.
+                synsets2filter = ["'s", "--"]
+                df_lang = df_lang[~df_lang["syn1"].isin(synsets2filter)]
+                df_lang = df_lang[~df_lang["syn2"].isin(synsets2filter)]
 
 
-def preprocessing_all(wordlist, outputfolder="data/stage1", inputfile="data/colexifications/colex_all_dedup.csv",
-                      threshold=3,
-                      lang_field="Glottocode", concept_field="SYN"):
-    """
-    Get all the data for the full colex.
-    :param wordlist:
-    :param outputfolder:
-    :param inputfile:
-    :param threshold:
-    :param lang_field:
-    :param concept_field:
-    :return:
-    """
-    print(outputfolder, wordlist)
-    vocab = load_wordlist(wordlist)
+                # affective loaded/ abstract/concrete wordlist: ratings=True
+                if ratings:
+                    df_ds = df_lang[df_lang["syn1"].isin(vocab) & df_lang["syn2"].isin(vocab)]
+                else:
+                    df_ds = df_lang[df_lang["syn1"].isin(vocab) | df_lang["syn2"].isin(vocab)]
 
-    df = pd.read_csv(inputfile)
-
-    # filter out the synsets
-    synsets2filter = ["'s", "--"]
-    df = df[~df[f"{concept_field}1"].isin(synsets2filter)]
-    df = df[~df[f"{concept_field}2"].isin(synsets2filter)]
-
-    print(f" len {len(df)}")
-
-    df_ds = df[df[f"{concept_field}1"].isin(vocab) | df[f"{concept_field}2"].isin(vocab)]
-    if len(df_ds) > 0:
-        print(f"len {len(df_ds)}")
-        df_ds = df_ds.drop_duplicates(subset=[lang_field, "COLEX"])
-
-        langs = []
-        for lang, group in df_ds.groupby(lang_field):
-            syns = set(group[f"{concept_field}1"].tolist() + group[f"{concept_field}2"].tolist())
-            if len(syns) > threshold:  # filter out synsets appear in less than 3 languages.
-                langs.append(lang)
-
-        df_ds = df_ds[df_ds[lang_field].isin(langs)]
-        print(f"len {len(df_ds)} langs {len(langs)}")
-        df_ds.to_csv(f"{outputfolder}/colex_all_dedup_{wordlist}.csv", index=False)
-    else:
-        print(f"no concept in the data available")
+                df_ds.to_csv(os.path.join(outputdir, f"{language}.csv"), index=False)
+            except Exception as msg:
+                print(msg)
 
 
 if __name__ == '__main__':

@@ -42,7 +42,7 @@ def load_colex_dict(ds, wordlist):
     """
     Load colex information
     :param ds: clics3, colexnet, wn, colex_all_dedup
-    :param wordlist: nuclear, peripheral, emotion_semantics
+    :param wordlist: nuclear, non-nuclear, emotion_semantics
     :return: dictionary of word pairs with pmi
     """
 

@@ -6,9 +6,11 @@ import pandas as pd
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
+#  linguistically motivated language contact distances.
 
 def get_language_distance(inputfile="data/languages/languages_colexnet.csv",
                           outputfolder="data/stage1/language_contact_colexnet"):
+
     df_geodesic = pd.read_csv("data/stage1/lang2lang_geodesic.csv")
     print(len(df_geodesic))
     df_geodesic.dropna(subset=["ISO1", "ISO2"], inplace=True)
@@ -25,6 +27,7 @@ def get_language_distance(inputfile="data/languages/languages_colexnet.csv",
 
     def get_lang2lang_contacts(tgt_lang, worklangs=interlangs, lang2lang_dict=lang2lang_dict_sorted,
                                outputfolder=outputfolder):
+        # calculate language distances with the nr of languages in between (Dryer 2018)
         outputfile = f"{outputfolder}/{tgt_lang}.json"
         if not os.path.exists(outputfile):
             in_dryer2018 = defaultdict(dict)
