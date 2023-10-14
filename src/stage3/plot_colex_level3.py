@@ -21,15 +21,17 @@ def plot_control_phylo(group, df, outputdir, ylim=(-0.1, 0.2), figsize=(8, 6)):
             ax.collections[0].get_offsets(), ax.collections[1].get_offsets()):
         ax.plot([x0, x1], [y0, y1], color='grey', ls=':', zorder=0)
 
-
-    ax.set_xlabel('ylabel', fontsize='medium')  # relative to plt.rcParams['font.size']
-    ax.set_xlabel('Operationalizations of Contact Intensity')
-    ax.axhline(0, color='black', ls='--')
+    ax.set_xlabel('Operationalizations of Contact Intensity', fontsize=18)
+    ax.set_ylabel('Beta', fontsize=18)
 
     ax.set_ylim(ylim[0], ylim[1])
-    plt.title("(COLEX~CONTACT)|GENETIC", loc="left")
+    ax.axhline(0, color='black', ls='--')
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
 
-    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+    plt.title("(COLEX~CONTACT)|PHYLO", loc="left", fontsize=22)
+
+    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1), fontsize=18)
     plt.savefig(os.path.join(outputdir, f"control_phylo_{group}_level3.png"), bbox_inches='tight')
 
 
@@ -46,13 +48,16 @@ def plot_control_geo(group, df, outputdir, ylim=(-0.1, 0.2), figsize=(8, 6)):
             ax.collections[0].get_offsets(), ax.collections[1].get_offsets()):
         ax.plot([x0, x1], [y0, y1], color='grey', ls=':', zorder=0)
 
+    ax.set_ylim(ylim[0], ylim[1])
     ax.axhline(0, color='black', ls='--')
 
-    ax.set_ylim(ylim[0], ylim[1])
-    ax.set_xlabel('Operationalizations of Contact Intensity')
-    plt.title("(COLEX~PHYLO)|CONTACT", loc="left")
+    ax.set_xlabel('Operationalizations of Contact Intensity', fontsize=18)
+    ax.set_ylabel('Beta', fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.title("(COLEX~PHYLO)|CONTACT", loc="left", fontsize=22)
 
-    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1), fontsize=18)
     plt.savefig(os.path.join(outputdir, f"control_geo_{group}_level3.png"), bbox_inches='tight')
 
     # close.

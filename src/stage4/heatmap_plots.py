@@ -38,6 +38,7 @@ def main(wordlist):
     df_lang = pd.read_csv("data/languages/languages_colexnet.csv")
 
     df_european = df_lang[df_lang["name"].isin(european_langs)]
+    # df_european.to_csv("data/languages/languages_europe.csv", index=False)
 
 
     print(f"langs: {len(european_langs)}, overlapping {len(df_european)}")

@@ -26,15 +26,17 @@ def plot_control_phylo(group, df, outputdir, ylim=(-0.1, 0.4), figsize=(8, 6)):
         ax.plot([x1, x2], [y1, y2], color='grey', ls=':', zorder=0)
         ax.plot([x0, x2], [y0, y2], color='grey', ls=':', zorder=0)
 
-    ax.set_xlabel('ylabel', fontsize='medium')  # relative to plt.rcParams['font.size']
-    ax.set_xlabel('Operationalizations of Contact Intensity')
+    ax.set_xlabel('Operationalizations of Contact Intensity',  fontsize=18)
+    ax.set_ylabel('Beta', fontsize=18)
 
     ax.set_ylim(ylim[0], ylim[1])
     ax.axhline(0, color='black', ls='--')
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
 
-    plt.title("(COLEX~CONTACT)|GENETIC", loc="left")
+    plt.title("(COLEX~CONTACT)|PHYLO", loc="left", fontsize=22)
 
-    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1), fontsize=18)
     plt.savefig(os.path.join(outputdir, f"control_phylo_{group}_level1.png"), bbox_inches='tight')
 
 
@@ -56,10 +58,13 @@ def plot_control_geo(group, df, outputdir, ylim=(-0.1, 0.4), figsize=(8, 6)):
     ax.set_ylim(ylim[0], ylim[1])
     ax.axhline(0, color='black', ls='--')
 
-    ax.set_xlabel('Operationalizations of Contact Intensity')
-    plt.title("(COLEX~PHYLO)|CONTACT", loc="left")
+    ax.set_xlabel('Operationalizations of Contact Intensity', fontsize=18)
+    ax.set_ylabel('Beta', fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.title("(COLEX~PHYLO)|CONTACT", loc="left", fontsize=22)
 
-    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+    sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1), fontsize=18)
     # plt.savefig(f"{stage3}/control_geo_{group}_level1.png", bbox_inches='tight')
     plt.savefig(os.path.join(outputdir, f"control_geo_{group}_level1.png"), bbox_inches='tight')
 
@@ -69,14 +74,22 @@ def plot_control_geo(group, df, outputdir, ylim=(-0.1, 0.4), figsize=(8, 6)):
     plt.clf()
 
 
-def main(inputfile):
+def main(inputfile, replication=None):
     # inputfile = "data/stage3/results/colex_jaeger_inner/controlled_lang_graph_colexnet_reports.csv"
-    folder_name = os.path.dirname(inputfile).replace("data/stage3/results/", "")
-    basename = os.path.basename(inputfile).replace(".csv", "")
-    outputdir = os.path.join("data/stage3/plots", f"{folder_name}_{basename}", "level1")
-    print(outputdir)
-    if not os.path.exists(outputdir):
-        os.makedirs(outputdir)
+    if replication:
+        folder_name = os.path.dirname(inputfile).replace("data/stage3/results/replication/", "")
+        basename = os.path.basename(inputfile).replace(".csv", "")
+        outputdir = os.path.join(f"data/stage3/plots/{replication}", f"{folder_name}_{basename}", "level1")
+        print(outputdir)
+        if not os.path.exists(outputdir):
+            os.makedirs(outputdir)
+    else:
+        folder_name = os.path.dirname(inputfile).replace("data/stage3/results/", "")
+        basename = os.path.basename(inputfile).replace(".csv", "")
+        outputdir = os.path.join("data/stage3/plots", f"{folder_name}_{basename}", "level1")
+        print(outputdir)
+        if not os.path.exists(outputdir):
+            os.makedirs(outputdir)
 
     df = pd.read_csv(inputfile)
     df = df[df["response"].isin(["nuclear", "non_nuclear", "emotion", "random"])]
