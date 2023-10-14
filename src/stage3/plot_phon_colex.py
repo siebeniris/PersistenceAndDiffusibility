@@ -1,3 +1,5 @@
+import os
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,7 +11,7 @@ stage3 = "data/stage3/plots"
 
 # color palettes: https://matplotlib.org/stable/gallery/color/named_colors.html
 
-def plot_control_phylo(group, df, ylim=(-0.1, 0.35), figsize=(5, 6)):
+def plot_control_phylo(group, df, outputdir, ylim=(-0.1, 0.35), figsize=(5, 6)):
     df = df[df["group"] == group]
     df = df[df["control"] == "genetic"]
 
@@ -29,14 +31,15 @@ def plot_control_phylo(group, df, ylim=(-0.1, 0.35), figsize=(5, 6)):
 
     plt.title("(COLEX/PHON~CONTACT)|PHYLO", loc="left")
     sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
-    # plt.savefig(f"{stage3}/colex_phon/control_phylo_{group}.png", bbox_inches='tight')
-    plt.savefig(f"{stage3}/colex_phon/control_phylo_{group}.png", bbox_inches='tight')
+
+    plt.savefig(os.path.join(outputdir, f"control_phylo_{group}.png"), bbox_inches='tight')
+
     # close.
     plt.close()
     plt.clf()
 
 
-def plot_control_geo(group, df, ylim=(-0.1, 0.35), figsize=(5, 6)):
+def plot_control_geo(group, df, outputdir, ylim=(-0.1, 0.35), figsize=(5, 6)):
     df = df[df["group"] == group]
     df = df[df["predictor"] == "genetic"]
     print(df.head())
@@ -59,21 +62,24 @@ def plot_control_geo(group, df, ylim=(-0.1, 0.35), figsize=(5, 6)):
     plt.title("(COLEX/PHON~PHYLO)|CONTACT", loc="left")
 
     sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
-    plt.savefig(f"{stage3}/colex_phon/control_geo_{group}.png", bbox_inches='tight')
+    # plt.savefig(f"{stage3}/colex_phon/control_geo_{group}.png", bbox_inches='tight')
+    plt.savefig(os.path.join(outputdir, f"control_geo_{group}.png"), bbox_inches='tight')
 
     # close.
     plt.close()
     plt.clf()
 
 
-def main():
-    # inputfile = "data/stage3/results/phon_colex_mixed_effects_results.csv"
-    # inputfile = "data/stage3/results/non_neighbours/phon_reports_mixed_effects_interval.csv"
-    inputfile="data/stage3/results/all/control_phon_reports_mixed_effects2.csv"
-    # inputfile = "data/stage3/results/new/phon_reports_mixed_effects_geo_relate2.csv"
+def main(inputfile):
+    folder_name = os.path.dirname(inputfile).replace("data/stage3/results/", "")
+    basename = os.path.basename(inputfile).replace(".csv", "")
+    outputdir = os.path.join("data/stage3/plots", f"{folder_name}_{basename}", "colex_phon")
+    print(outputdir)
+    if not os.path.exists(outputdir):
+        os.makedirs(outputdir)
+
     df = pd.read_csv(inputfile)
     values = {"geodist_norm": "GEO.Dist", "contact_norm": "Contact.Dist", "neighbour": "Neighbour"}
-    # values = {"geodist_norm": "GEO.Dist", "contact_norm": "Contact.Dist"}
 
     responses = {"nuclear": "colex"}
     columns = {"beta": "Beta", "response": "Response"}
@@ -85,9 +91,10 @@ def main():
     groups = list(set(df["group"].tolist()))
     for group in groups:
         print(f"{group} plots....")
-        plot_control_geo(group, df)
-        plot_control_phylo(group, df)
+        plot_control_geo(group, df, outputdir)
+        plot_control_phylo(group, df, outputdir)
 
 
 if __name__ == '__main__':
-    main()
+    import plac
+    plac.call(main)

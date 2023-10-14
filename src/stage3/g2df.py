@@ -1,21 +1,21 @@
+import os.path
+
 import numpy as np
 import networkx as nx
-import pickle
 
 from pandarallel import pandarallel
 
 pandarallel.initialize(progress_bar=True)
 
 
-def load_graph(name):
+def load_graph(filepath):
     """
-    Load a graph into a dataframe.
-    :param name:
+    Load a graph.
+    :param filepath:
     :return:
     """
-    with open(f"data/stage2/graphs/{name}_geo_graph.pickle", "rb") as f:
-        g = pickle.load(f)
-        return g
+
+    return nx.read_edgelist(filepath)
 
 
 def l2c(field, df):
@@ -61,29 +61,9 @@ def g2df(g):
     df = l2c("macroarea", df)
     df = l2c("genus", df)
 
-    # change similarity to dissimilarity - distance.
-    df["nuclear"] = 1 - df["nuclear"]
-    df["peripheral"] = 1 - df["peripheral"]
-    df["emotion"] = 1 - df["emotion"]
-    df["random"] = 1 - df["random"]
-
-    # concreteness
-    df["abstract"] = 1 - df["abstract"]
-    df["concrete"] = 1 - df["concrete"]
-    # affectivess
-    # df["affective"] = 1 - df["affective"]
-
-    # controlled.
-    df["aff_conc"] = 1 - df["aff_conc"]
-    df["aff_abs"] = 1 - df["aff_abs"]
-    # affectivess
-    # df["affective"] = 1 - df["affective"]
-
-
     contact = df["contact"].to_numpy().reshape(-1, 1)
     contact = normalizer(contact)
     df["contact_norm"] = contact
-    # df["contact_normalize"]= contact.parallel_apply(normalize)
 
     geodist = df["geodist"].to_numpy().reshape(-1, 1)
     df["geodist_norm"] = normalizer(geodist)
@@ -115,20 +95,28 @@ def get_related_level(fam, genus, branch):
     return r
 
 
-def main(name):
+def main(graph_filepath, outputfolder="data/stage3"):
     """
     Graph to dataframe.
 
-    :param name:
+    :param graph_filepath:
+    :param outputfolder:
     :return:
     """
-    print(f"loading the graph {name}")
-    g = load_graph(name)
+    filename = os.path.basename(graph_filepath)
+    folder_name = os.path.dirname(graph_filepath).replace("data/stage2/graphs/", "")
+    sub_dir = os.path.join(outputfolder, folder_name)
+    if not os.path.exists(sub_dir):
+        os.makedirs(sub_dir)
+
+
+    print(f"loading the graph {graph_filepath}")
+    g = load_graph(graph_filepath)
     print(f"processing and extract dataframe...")
     df = g2df(g)
     df["relate_level"] = df.parallel_apply(lambda x: get_related_level(x.family_id, x.genus_id, x.branch_id), axis=1)
 
-    edge_file = f"data/stage3/{name}_geo_graph_edges.csv"
+    edge_file = os.path.join(sub_dir, filename).replace(".txt", ".csv")
     print(f"dataframe saved to {edge_file}")
     df.to_csv(edge_file, index=False)
 

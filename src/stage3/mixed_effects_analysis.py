@@ -1,13 +1,17 @@
+import os.path
+
+import numpy as np
 import pandas as pd
 import warnings
 import statsmodels.formula.api as smf
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 
-warnings.simplefilter('ignore', ConvergenceWarning)
+warnings.filterwarnings('ignore')
+# warnings.simplefilter('ignore', ConvergenceWarning)
 
 
 def analysis_mixed_effects_per_group(response, predictor, control, group, df):
-    # response -> COLEX(nuclear/peripheral/emotion/abstract/concrete/affective), PHON
+    # response -> COLEX(nuclear/non-nuclear/emotion/abstract/concrete/affective), PHON
     # group -> area, macroarea, genus, branch, family, relate_level
     # predictor (contact) -> neighbour, contact, geodist
     # predictor (PHYLO) -> genetic
@@ -17,6 +21,7 @@ def analysis_mixed_effects_per_group(response, predictor, control, group, df):
     languages = set(df["source"].tolist() + df["target"].tolist())
     print(f"language pairs {len(df)}, languages {len(languages)} ")
     print(f"({response} ~ {predictor})|{control} <-> {group}")
+
     model = smf.mixedlm(f"{response} ~ {predictor}  ", df, groups=df[group], re_formula=f"~{control}")
     mdf = model.fit()
     beta = mdf.params.loc[predictor]
@@ -28,20 +33,35 @@ def analysis_mixed_effects_per_group(response, predictor, control, group, df):
 
 
 def main(inputfile, ds="colexnet"):
+    # inputfile from data/stage3, ds: colexnet/phon.
+    basename = os.path.basename(inputfile).replace(".csv", "")
+    folder_name = os.path.dirname(inputfile).replace("data/stage3/", "")
+    results_dir = "data/stage3/results/"
+    output_dir = os.path.join(results_dir, folder_name)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    reporter = open(os.path.join(output_dir, f"{basename}_{ds}_reports.csv"), "a+")
+
     df = pd.read_csv(inputfile)
+    # df["syntactic"] = df["syntactic"].replace({"unk": -1})
+    # df["genetic"] = df["genetic"].replace({"unk": -1})
+
+    # df = df.dropna(subset=["syntactic", "genetic"])
+
+    df = df.rename(columns={"non-nuclear": "non_nuclear"})
 
     # df = df[df["relate_level"] != -1] # doesn't make a difference.
 
     phylo = ["genetic"]
-    # contact = ["geodist_norm", "contact_norm"]
+
     contact = ["geodist_norm", "contact_norm", "neighbour"]
     groups = ["area_id", "macroarea_id", "relate_level", "family_id", "genus_id", "branch_id"]
-    reporter = open(f"data/stage3/results/all/{ds}_reports_mixed_effects2.csv", "a+")
+
     reporter.write(f"response,predictor,control,group,beta,pvalue,conf_int1,conf_int2\n")
 
     if ds == "phon":
         for response in ["phon", "nuclear", "syntactic"]:
-            df = df.dropna(subset=["phon", "nuclear"])
+            df = df.dropna(subset=["phon", "nuclear", "syntactic"])
             for v1, v2 in [(x, y) for x in phylo for y in contact]:
                 for group in groups:
                     b1, p1, ci11, ci12 = analysis_mixed_effects_per_group(response, v1, v2, group, df)
@@ -50,8 +70,8 @@ def main(inputfile, ds="colexnet"):
                     reporter.write(f"{response},{v2},{v1},{group},{b2},{p2},{ci21},{ci22}\n")
 
     else:
-        for response in ["nuclear", "peripheral", "emotion", "random"]:
-            df = df.dropna(subset=["nuclear"])
+        for response in ["nuclear", "non_nuclear", "emotion", "random"]:
+            df = df.dropna(subset=["nuclear", "non_nuclear", "emotion", "random"])
             for v1, v2 in [(x, y) for x in phylo for y in contact]:
                 for group in groups:
                     b1, p1, ci11, ci12 = analysis_mixed_effects_per_group(response, v1, v2, group, df)
@@ -68,8 +88,8 @@ def main(inputfile, ds="colexnet"):
                     b2, p2, ci21, ci22 = analysis_mixed_effects_per_group(response, v2, v1, group, df)
                     reporter.write(f"{response},{v2},{v1},{group},{b2},{p2},{ci21},{ci22}\n")
 
-        for response in ["aff_conc", "aff_abs"]:
-            df = df.dropna(subset=["aff_conc", "aff_abs"])
+        for response in ["aff_concrete", "aff_abstract"]:
+            df = df.dropna(subset=["aff_concrete", "aff_abstract"])
             for v1, v2 in [(x, y) for x in phylo for y in contact]:
                 for group in groups:
                     b1, p1, ci11, ci12 = analysis_mixed_effects_per_group(response, v1, v2, group, df)
