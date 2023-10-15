@@ -18,7 +18,7 @@ def plot_control_phylo(group, df, outputdir, ylim=(-0.1, 0.35), figsize=(5, 6)):
     plt.figure(figsize=figsize)
     palettes = ["royalblue", "goldenrod", "tomato"]
     ax = sns.pointplot(x='predictor', y='Beta', hue='Response', palette=palettes,
-                       linestyles='', dodge=.3, data=df)
+                       linestyles='', dodge=.3, data=df, scale=1.5)
     for (x0, y0), (x1, y1), (x2, y2) in zip(ax.collections[0].get_offsets(), ax.collections[1].get_offsets(),
                                             ax.collections[2].get_offsets()):
         ax.plot([x0, x1], [y0, y1], color='grey', ls=':', zorder=0)
@@ -51,7 +51,7 @@ def plot_control_geo(group, df, outputdir, ylim=(-0.1, 0.35), figsize=(5, 6)):
 
     palettes = ["royalblue", "goldenrod", "tomato"]
     ax = sns.pointplot(x='control', y='Beta', hue='Response', palette=palettes,
-                       linestyles='', dodge=.3, data=df)
+                       linestyles='', dodge=.3, data=df, scale=1.5)
     for (x0, y0), (x1, y1), (x2, y2) in zip(ax.collections[0].get_offsets(), ax.collections[1].get_offsets(),
                                             ax.collections[2].get_offsets()):
         ax.plot([x0, x1], [y0, y1], color='grey', ls=':', zorder=0)

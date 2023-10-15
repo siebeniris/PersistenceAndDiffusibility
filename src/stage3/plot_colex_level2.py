@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 sns.set_style("darkgrid")
-palettes = ["seagreen", "cornflowerblue"]
+palettes = ["orange", "blue"]
 stage3 = "data/stage3/plots"
 
 
@@ -15,7 +15,7 @@ def plot_control_phylo(group, df, outputdir, ylim=(-0.1, 0.2), figsize=(8, 6)):
 
     plt.figure(figsize=figsize)
     ax = sns.pointplot(x='predictor', y='Beta', hue='Response', palette=palettes,
-                       linestyles='', dodge=.6, data=df)
+                       linestyles='', dodge=.6, data=df, scale=2)
 
     for (x0, y0), (x1, y1) in zip(
             ax.collections[0].get_offsets(), ax.collections[1].get_offsets()):
@@ -45,7 +45,7 @@ def plot_control_geo(group, df, outputdir, ylim=(-0.1, 0.2), figsize=(8, 6)):
     plt.figure(figsize=figsize)
 
     ax = sns.pointplot(x='control', y='Beta', hue='Response', palette=palettes,
-                       linestyles='', dodge=.6, data=df)
+                       linestyles='', dodge=.6, data=df, scale=2)
 
     for (x0, y0), (x1, y1) in zip(
             ax.collections[0].get_offsets(), ax.collections[1].get_offsets()):

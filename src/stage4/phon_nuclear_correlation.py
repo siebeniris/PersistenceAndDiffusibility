@@ -1,3 +1,5 @@
+import os.path
+
 import pandas as pd
 from pandarallel import pandarallel
 
@@ -8,9 +10,9 @@ from scipy.stats import pearsonr
 
 ### Pearson correlation between PHON. & Nuclear.
 
-
-df = pd.read_csv("data/stage3/colexnet_phon_geo_graph_edges.csv")
-df = df.dropna(subset=["phon", "nuclear"])
+#
+# df = pd.read_csv("data/stage3/colexnet_phon_geo_graph_edges.csv")
+# df = df.dropna(subset=["phon", "nuclear"])
 
 
 def get_coefficients(field, df):
@@ -76,11 +78,11 @@ def plot_pearsonr(df, field, figsize, width=0.5):
     rects = ax.patches
     ses = df_pearsonr["standard_error"].tolist()
     samples = df_pearsonr["sample"].tolist()
-    plt.ylabel(f"{field.capitalize()}", fontsize=16)
-    plt.xlabel("Pearson correlation with 95% CI", fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    plt.xlim(0, 0.225)
+    plt.ylabel(f"{field.capitalize()}", fontsize=20)
+    plt.xlabel("Pearson correlation with 95% CI", fontsize=20)
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
+    # plt.xlim(0, 0.225)
     # For each bar: Place a label
     for idx, rect in enumerate(rects):
         # Get X and Y placement of label from rect.
@@ -105,21 +107,24 @@ def plot_pearsonr(df, field, figsize, width=0.5):
         # Create annotation
         plt.annotate(
             label,  # Use `label` as label
-            (x_value + ses[idx] if x_value > 0 else x_value - ses[idx], y_value),  # Place label at end of the bar
+            (x_value + ses[idx] if x_value > 0 else x_value - ses[idx] -0.2, y_value),  # Place label at end of the bar
             xytext=(space, 0),  # Horizontally shift label by `space`
             textcoords="offset points",  # Interpret `xytext` as offset in points
             va='center',
-            ha=ha, fontsize=10)  # Horizontally align label differently for
+            ha=ha, fontsize=14)  # Horizontally align label differently for
         # positive and negative values.
-    plt.savefig(f"plots/{field}_pearsonr.png")
+
+    plt.savefig(f"data/stage4/phon_colex_corr/{field}_pearsonr.png", bbox_inches='tight')
 
     plt.close()
     plt.clf()
 
 
-def main(field, w=14, h=5, width=0.5):
-    df = pd.read_csv("data/stage3/colexnet_phon_geo_graph_edges.csv")
+def main(field, w=16, h=7, width=0.5):
+    df = pd.read_csv("data/stage3/jaeger/controlled_lang_graph.csv")
     df = df.dropna(subset=["phon", "nuclear"])
+    if not os.path.exists("data/stage4/phon_colex_corr"):
+        os.makedirs("data/stage4/phon_colex_corr")
     plot_pearsonr(df, field, figsize=(w, h), width=width)
 
 

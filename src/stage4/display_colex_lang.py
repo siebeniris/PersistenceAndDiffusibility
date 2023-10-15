@@ -16,7 +16,7 @@ def main():
     name2iso = dict(zip(df_lang["name"], df_lang["iso639_3"]))
     data_dir = "data/stage2/colex2cosine"
     colex_examples = ["language~tongue", "eye~look", "finger~hand", "tree~wood", "knee~kneel"]
-    languages = ["Russian",  "Polish", "Danish", "Rundi", "Igbo", "Yoruba", "Hindi", "Literary Chinese"]
+    languages = ["Russian",  "Polish", "German", "Dutch", "Igbo", "Yoruba", "Hindi", "Literary Chinese"]
 
     df_nuclear = pd.read_csv(f"{data_dir}/matrices/nuclear.csv", index_col=0, low_memory=False)
     df_nuclear = df_nuclear.rename(index=iso2name)
