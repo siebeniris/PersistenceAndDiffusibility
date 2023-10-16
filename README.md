@@ -11,7 +11,7 @@ upload all these data to GitHub or somewhere else:
 - data
     |- colexifications
         |- colex_all_dedup.csv (all the colexification patterns in colexnet+)
-        |- colex_freq_processed  (put here: CrossCoLEX/data/colex_freq_processed)
+        |- colex_freq_processed  (colexification frequencies extracted from Colexnet+)
     |- languages
         |- languages_all.csv (data collected from Glottolog, WALS, AUTOTYP, etc.)
         |- languages_colexnet.csv (1320 languages, the languages of colexnet+ which have geo information, 870,540 language pairs)
