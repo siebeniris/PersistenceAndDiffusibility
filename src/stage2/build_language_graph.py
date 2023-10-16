@@ -121,8 +121,11 @@ def build_lang2geo_graph(name="colex_jaeger_inner", controlled="controlled",
         os.makedirs(outputdir)
     if controlled == "controlled":
         outputfile = os.path.join(outputdir, f"controlled_lang_graph.txt")
+        outputfile_nodes = os.path.join(outputdir, f"controlled_lang_graph_nodes.json")
     else:
         outputfile = os.path.join(outputdir, f"lang_graph.txt")
+        outputfile_nodes = os.path.join(outputdir, f"lang_graph_nodes.json")
+
     langdict = langauge_info(language_file)
 
     # lang2lang geodist
@@ -251,6 +254,9 @@ def build_lang2geo_graph(name="colex_jaeger_inner", controlled="controlled",
     print(f"langs {len(g.nodes)} - lang pairs {len(g.edges)}")
     print(f"writing the graph to {outputfile}")
     # nx.write_gpickle(g, outputfile)
+    with open(outputfile_nodes, "w") as f:
+        json.dump(dict(g.nodes), f)
+
     nx.write_edgelist(g, outputfile)
 
 
