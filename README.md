@@ -262,10 +262,10 @@ Examples:
 
 ## 2.  Mixed effects Regression Analysis
 - colexnet 
-  - `python src/stage3/mixed_effects_analysis.py data/stage3/controlled_colexnet_geo_graph_edges.csv colexnet`
+  - `python src/stage3/mixed_effects_analysis.py $result_file$ colexnet`
 
-- phon.
-  - `python src/stage3/mixed_effects_analysis.py data/stage3/colexnet_phon_geo_graph_edges.csv phon`
+- phon
+  - `python src/stage3/mixed_effects_analysis.py $result_file$ phon`
 
 
 ## 3. Plot
