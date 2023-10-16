@@ -22,7 +22,7 @@ def load_lang_colex(inputfolder, lang):
 
 
 def preprocessing_dataset(wordlist, ratings=False, outputfolder="data/stage1/word2colex",
-                          inputfolder="/Users/yiyichen/Documents/experiments/CrossCoLEX/data/colex_freq_processed",
+                          inputfolder="data/colex_freq_processed",
                           threshold=3):
     """
     Get colexification graphs for each dataset including the re. wordlist.
