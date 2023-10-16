@@ -1,12 +1,12 @@
 # Patterns of Persistence and Diffusibility across World's Languages 
 
 ## Resources
-- Zenodo: [https://zenodo.org/record/8074593](https://zenodo.org/record/8074593)
+- OSF: https://osf.io/5sh62/?view_only=5d07119803c24743940a08777884cc33 
 - According to  different set of languages in each graph, language contact params. are calculated anew each time.
 
 ## Data Structure
+all the following data are stored in OSF page above.
 
-upload all these data to GitHub or somewhere else:
 ```
 - data
     |- colexifications
