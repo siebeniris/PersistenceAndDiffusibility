@@ -3,6 +3,8 @@
 ## Resources
 - OSF: https://osf.io/5sh62/?view_only=5d07119803c24743940a08777884cc33 
 - According to  different set of languages in each graph, language contact params. are calculated anew each time.
+   
+
 
 ## Data Structure
 all the following data are stored in OSF page above.
@@ -59,8 +61,6 @@ all the following data are stored in OSF page above.
                 |- aff_abstract_words.csv (lang 1149, colex. 68)
                 |- aff_concrete_words.csv (lang 1198, colex. 68)
         |- graphs (resulting graphs)
-            |- colex_jaeger_inner
-            |- colex_jaeger_outer
             |- colexnet
             |- jaeger
     |- stage3
@@ -105,6 +105,80 @@ all the following data are stored in OSF page above.
         |- heatmap_plots.py
         |- phon_nuclear_correlation.py
         |- print_out_words.py
+```
+
+
+  
+## Loading networkx graph
+
+- to avoid security issues with pickle files, we store the graph nodes in json files and edges in txt files
+  - graph directory: `data/stage2/graphs`
+    - nodes (language iso3code) are stored as json files with language attributes
+    - edges with their attributes are stored in txt file 
+
+- code snippet to construct networkx graph
+
+```
+import networkx as nx
+import json
+
+edge_fh = open("data/stage2/graphs/colexnet/lang_graph.txt", "rb")
+g = nx.read_edgelist(edge_fh)
+
+nodes_fh = open("data/stage2/graphs/colexnet/lang_graph_nodes.json", "r")
+g_nodes = json.load(nodes_fh)
+
+# convert dictionary keys, values into list of tuples to be added to the graph
+g_nodes_tuples = []
+for lang, lang_attributes  in g_nodes.items():
+    g_nodes_tuples.append((lang, lang_attributes))
+
+g.add_nodes_from(g_nodes_tuples)
+```
+
+example node:
+```
+g.nodes["deu"]
+
+
+output:
+{'name': 'German',
+ 'family': 'Indo-European',
+ 'genus': 'Germanic',
+ 'parent': 'Global German',
+ 'branch': 'Global German',
+ 'glottocode': 'stan1295',
+ 'macroarea': 'Eurasia',
+ 'area': 'Europe',
+ 'timespan': [],
+ 'coord': [48.649, 12.4676]}
+
+```
+
+example edge:
+```
+g.edges["nld", "deu"]
+
+output:
+
+{'contact': 3,
+ 'geodist': 648.8953043040958,
+ 'neighbour': 1,
+ 'branch': 0,
+ 'area': 'Europe',
+ 'family': 'Indo-European',
+ 'genus': 'Germanic',
+ 'macroarea': 'Eurasia',
+ 'syntactic': 0.3474,
+ 'genetic': 0.39285000000000003,
+ 'emotion': 0.4684797556679733,
+ 'nuclear': 0.4531300650766711,
+ 'non-nuclear': 0.4924596901293124,
+ 'random': 0.3678957843672906,
+ 'concrete': 0.4024320673244818,
+ 'abstract': 0.4732505932023499,
+ 'aff_abstract': 0.9262289504160344,
+ 'phon': 0.3960052450492234}
 ```
 
 
