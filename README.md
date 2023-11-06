@@ -58,7 +58,7 @@ all the following data are stored in OSF page above.
                 |- concrete_words.csv (langs 1334, colex. 10000)
                 |- aff_abstract_words.csv (lang 1149, colex. 68)
                 |- aff_concrete_words.csv (lang 1198, colex. 68)
-        |- graphs
+        |- graphs (resulting graphs)
             |- colex_jaeger_inner
             |- colex_jaeger_outer
             |- colexnet
