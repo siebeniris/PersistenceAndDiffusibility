@@ -320,7 +320,7 @@ Examples:
 # Stage 3 Experiment and Analysis
 
 
-## 1. convert graph to edgelists for further analysis:
+## 1. Convert language graphs to edgelists for further analysis:
 
 [//]: # (- convert colex~phon graph)
 
@@ -330,11 +330,73 @@ Examples:
 
 [//]: # (  - `python src/stage3/g2df.py colexnet`)
 
-- Convert graph to df.
+- Convert graph to df
+  
 `python src/stage3/g2df.py data/stage2/graphs/colex_jaeger_outer/lang_graph.txt`
 
 
-## 2.  Mixed effects Regression Analysis
+## 2.  [Mixed effects Regression Analysis](#mixed_effects_regression)
+
+The mixed effects regression model we are using can be formulated as follows for readability:
+1. For testing hypothesis of persistence of colexification patterns and phonological markups of languages:
+   
+`COLEX ~ PHYLO + ( 1 + CONTACT | RELATEDNESS)`
+
+and
+
+ `PHON ~ PHYLO + ( 1 + CONTACT | RELATEDNESS)`
+
+The dependent variables are `COLEX` and `PHON`, accordingly, the independent variable is `PHYLO` (genetic distance). It is intended to test the fixed effects of `PHYLO` on the response `COLEX` or `PHON`, which are the coefficients we are estimating in the model. `RELATEDNESS` (the level of relatedness, e.g., lower-level, mid-level, higher-level, and unrelated) is the grouping variable for the random effects, and `CONTACT` (i.e., `GEO.Dist`, `Contact.Dist`, `Neighbour`) is the control variable that serves as a control in the random effects part of the model.
+
+The more formal formulations are defined as follows:
+
+`COLEX_{ij} = β_0 + β_{PHYLO} * PHYLO_{ij} + u_{0i} + (u_{CONTACT,0i} + u_{CONTACT,1i} * CONTACT_{ij}) + ε_{ij}`
+
+and
+
+`PHON_{ij} = β_0 + β_{PHYLO} * PHYLO_{ij} + u_{0i} + (u_{CONTACT,0i} + u_{CONTACT,1i} * CONTACT_{ij}) + ε_{ij}`
+
+Where
+* `COLEX_{ij}` and `PHON_{ij}` is the value of the dependent variable for observation `j` in group `i`, correspondingly;
+* `β_0` is the fixed intercept;
+* `PHYLO_{ij}` is the value of the variable `PHYLO` for observation `j` in group `i`.
+* `u_{0i}` is the random intercept for group i (RELATEDNESS);
+* `u_{CONTACT,0i}` is the random intercept for the variable `CONTACT` for group `i`;
+* `u_{CONTACT,1i}` is the random slope for the variable `CONTACT` for group i;
+* `CONTACT_{ij}`  is the value of the variable `CONTACT` for observation `j` in group `i`;
+* `ε_{ij}` is the error term for observation `j` in group `i`.
+
+2. For testing hypothesis of diffusibility of colexification patterns and phonological markups of languages:
+
+	`COLEX ~ CONTACT + ( 1 + PHYLO | RELATEDNESS )`
+
+	and
+
+    `PHON  ~ CONTACT + (1 + PHYLO | RELATEDNESS )`
+   
+The dependent variables are `COLEX` and `PHON`, accordingly, the independent variable is `CONTACT` (i.e., `GEO.Dist`, `Contact.Dist`, `Neighbour`). It is intended to test the fixed effects of `CONTACT` on the response `COLEX` or `PHON`, which are the coefficients we are estimating in the model. `RELATEDNESS` (the level of relatedness, e.g., family, branch, or macroarea) is the grouping variable for the random effects, and  `PHYLO` (genetic distance) is the control variable that serves as a control in the random effects part of the model.
+
+The more formal formulations are defined as follows:
+
+`COLEX_{ij} = β_0 + β_{CONTACT} ⋅CONTACT_{ij} + u_{0i} + (u_{PHYLO,0i} + u_{PHYLO,1i} ⋅PHYLO_{ij}) + ε_{ij}`
+
+and
+
+`PHON_{ij} = β_0 + β_{CONTACT} ⋅ CONTACT_{ij} + u_{0i} + (u_{PHYLO,0i} + u_{PHYLO,1i} ⋅ PHYLO_{ij}) + ε_{ij}`
+
+Where
+* `COLEX_{ij}` and `PHON_{ij}` is the value of the dependent variable for observation `j` in group `i`, correspondingly;
+* `β_0` is the fixed intercept;
+* `CONTACT_{ij}` is the value of the variable `CONTACT` for observation `j` in group `i`.
+* `u_{0i}` is the random intercept for group `i` (`RELATEDNESS`);
+* `u_{PHYLO,0i}` is the random intercept for the variable `PHYLO` for group `i`;
+* `u_{PHYLO,1i}` is the random slope for the variable `PHYLO` for group `i`;
+* `PHYLO_{ij}`  is the value of the variable `PHYLO` for observation `j` in group `i`;
+* `ε_{ij}` is the error term for observation `j` in group `i`.
+
+
+#### Run scripts:
+
 - colexnet 
   - `python src/stage3/mixed_effects_analysis.py $result_file$ colexnet`
 
@@ -347,5 +409,5 @@ Examples:
   - `python src/stage3/plot_phon_colex.py $result_file$ `
 
 - colex
-  - three levels of colex. plots
+  - three levels of colex. plots for presenting differential persistence and diffusibility of lexicon sets.
 
