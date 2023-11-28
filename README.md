@@ -335,7 +335,7 @@ Examples:
 `python src/stage3/g2df.py data/stage2/graphs/colex_jaeger_outer/lang_graph.txt`
 
 
-## 2.  [Mixed effects Regression Analysis](#mixed_effects_regression)
+## 2.  [Mixed effects Regression Analysis](https://anonymous.4open.science/r/PersistenceAndDiffusibility-018F/README.md#mixed_effects_regression)
 
 The mixed effects regression model we are using can be formulated as follows for readability:
 1. For testing hypothesis of persistence of colexification patterns and phonological markups of languages:
