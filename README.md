@@ -378,11 +378,11 @@ The dependent variables are `COLEX` and `PHON`, accordingly, the independent var
 
 The more formal formulations are defined as follows:
 
-`COLEX_{ij} = β_0 + β_{CONTACT} ⋅CONTACT_{ij} + u_{0i} + (u_{PHYLO,0i} + u_{PHYLO,1i} ⋅PHYLO_{ij}) + ε_{ij}`
+`COLEX_{ij} = β_0 + β_{CONTACT} * CONTACT_{ij} + u_{0i} + (u_{PHYLO,0i} + u_{PHYLO,1i} * PHYLO_{ij}) + ε_{ij}`
 
 and
 
-`PHON_{ij} = β_0 + β_{CONTACT} ⋅ CONTACT_{ij} + u_{0i} + (u_{PHYLO,0i} + u_{PHYLO,1i} ⋅ PHYLO_{ij}) + ε_{ij}`
+`PHON_{ij} = β_0 + β_{CONTACT} * CONTACT_{ij} + u_{0i} + (u_{PHYLO,0i} + u_{PHYLO,1i} * PHYLO_{ij}) + ε_{ij}`
 
 Where
 * `COLEX_{ij}` and `PHON_{ij}` is the value of the dependent variable for observation `j` in group `i`, correspondingly;
