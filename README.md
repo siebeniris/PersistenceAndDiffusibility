@@ -411,3 +411,7 @@ Where
 - colex
   - three levels of colex. plots for presenting differential persistence and diffusibility of lexicon sets.
 
+
+## Cite our paper:
+
+Chen, Yiyi, and Johannes Bjerva. "Patterns of Persistence and Diffusibility across World's Languages." arXiv preprint arXiv:2401.01698 (2024).
